@@ -1,19 +1,16 @@
-import '../style/main.css';
-import { useRef, useState, useEffect } from "react";
+import {  useState, useEffect } from "react";
 import ReactDOM from 'react-dom';
 /** @jsx jsx */
-import { jsx, css } from '@emotion/react'
-import useOnClickOutside from './hooks/useOutsideClick';
+import { Global, jsx, css } from '@emotion/react'
 
 const PAGE_PARAMS = Object.assign({
     countdown: 5,
-    offset: 2,
+    offset: 0,
     song: "",
     volume: 0.5,
-    font: "Press Start 2P",
+    font: "sans-serif",
     fontSize: "50vh",
 }, location.search.substr(1).split("&").map(x => x.split("=")).reduce((acc, i) => { acc[i[0]] = decodeURI(i[1]); return acc }, {}))
-console.log("PAGE_PARAMS",PAGE_PARAMS)
 
 const Song = new Audio(PAGE_PARAMS.song);
 Song.volume = PAGE_PARAMS.volume;
@@ -78,7 +75,6 @@ const App = () => {
             if (parseInt(prerollTime, 10) > parseInt(PAGE_PARAMS.offset, 10)) {
                 setPlaying(false);
             }
-            // time for a complicated stupid math thing.
             // its possible to supply a fractional offset, say 2.4 seconds.
             // because of this, and because this logic only fires once per second, 
             // it needs to handle the delay directly.
@@ -86,9 +82,6 @@ const App = () => {
                 setTimeout(()=>{
                     setPlaying(true);
                 },1000*timeLeft)
-            }
-            if (parseInt(prerollTime, 10) == parseInt(PAGE_PARAMS.offset, 10)) {
-                
             }
             if (prerollTime > 0) {
                 const timer = setTimeout(() => {
@@ -125,9 +118,6 @@ const App = () => {
     }
 
     const getWrapperClassName = () => {
-        // if (!isCountingDown) {
-        //     return "animate";
-        // }
         if (goAnimate) {
             return "animate";
         }
@@ -141,6 +131,7 @@ const App = () => {
 
     return (
         <div className="App" name="app">
+            <Global styles={ css(`html,body{height: 100%;width: 100%; padding:0; margin:0;}`) } />
             <div css={countdownWrapCss} className={getWrapperClassName()} onClick={() => { setCountingDown(!isCountingDown) }}>
                 <h1 css={st} className={getTimerClassName()}>{getPrerollValue()}</h1>
             </div>
